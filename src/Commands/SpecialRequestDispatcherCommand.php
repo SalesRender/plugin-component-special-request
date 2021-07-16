@@ -19,15 +19,16 @@ use XAKEPEHOK\Path\Path;
 class SpecialRequestDispatcherCommand extends Command
 {
 
-    const MAX_MEMORY = 25 * 1024 * 1024;
-
     private int $started;
-
     private int $handed = 0;
+    private int $maxMemoryInMb;
+    private int $queryLimit;
 
-    public function __construct()
+    public function __construct(int $maxMemoryInMb = 25, $queryLimit = 50)
     {
         parent::__construct("specialRequestDispatcher");
+        $this->maxMemoryInMb = $maxMemoryInMb * 1024 * 1024;
+        $this->queryLimit = $queryLimit;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -54,10 +55,10 @@ class SpecialRequestDispatcherCommand extends Command
             $requests = SpecialRequestDispatcher::findByCondition([
                 'OR' => [
                     'attemptAt' => null,
-                    'attemptAt[<]' => time() - 60,
+                    'attemptAt[<=]' => time() - 60,
                 ],
                 "ORDER" => ["attemptAt" => "ASC"],
-                'LIMIT' => 50
+                'LIMIT' => $this->queryLimit
             ]);
 
             foreach ($requests as $request) {
@@ -74,7 +75,7 @@ class SpecialRequestDispatcherCommand extends Command
 
             sleep(1);
 
-        } while (memory_get_usage(true) < self::MAX_MEMORY);
+        } while (memory_get_usage(true) < $this->maxMemoryInMb);
 
         $output->writeln('<info> -- High memory usage. Stopped -- </info>');
 
@@ -87,7 +88,7 @@ class SpecialRequestDispatcherCommand extends Command
     private function writeUsedMemory(OutputInterface $output)
     {
         $used = round(memory_get_usage(true) / 1024 / 1024, 2);
-        $max = round(self::MAX_MEMORY / 1024 / 1024, 2);
+        $max = round($this->maxMemoryInMb / 1024 / 1024, 2);
         $uptime = (new Duration(max(time() - $this->started, 1)))->humanize();
         $output->writeln("<info> -- Handed: {$this->handed}; Used {$used} MB of {$max} MB; Uptime: {$uptime} -- </info>");
     }
