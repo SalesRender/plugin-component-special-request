@@ -37,7 +37,7 @@ class SpecialRequestDispatcher extends Model implements PluginModelInterface
 
     protected int $httpTimeout;
 
-    public function __construct(SpecialRequest $request, int $attemptLimit, int $httpTimeout = 30)
+    public function __construct(SpecialRequest $request, int $attemptLimit = null, int $httpTimeout = 30)
     {
         $this->id = UuidHelper::getUuid();
         if (Connector::hasReference()) {
@@ -46,7 +46,8 @@ class SpecialRequestDispatcher extends Model implements PluginModelInterface
         }
         $this->createdAt = time();
         $this->request = $request;
-        $this->attemptLimit = $attemptLimit;
+        $limitByExpire = $request->getExpireAt() ? round(($request->getExpireAt() - time()) / 60) : null;
+        $this->attemptLimit = $attemptLimit ?? $limitByExpire ?? 24 * 60;
         $this->httpTimeout = $httpTimeout;
     }
 
