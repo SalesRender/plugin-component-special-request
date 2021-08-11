@@ -74,7 +74,14 @@ class SpecialRequestDispatcher extends Model implements PluginModelInterface
                 $this->request->getMethod(),
                 $this->request->getUri(),
                 [
-                    'json' => ['request' => $this->request->getBody()],
+                    'json' => [
+                        'request' => $this->request->getBody(),
+                        '__dispatcher' => [
+                            'createdAt' => $this->createdAt,
+                            'attemptNumber' => $this->attemptNumber,
+                            'attemptLimit' => $this->attemptLimit,
+                        ]
+                    ],
                     'timeout' => $this->httpTimeout,
                 ]
             );
