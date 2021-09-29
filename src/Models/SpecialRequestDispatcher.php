@@ -98,10 +98,18 @@ class SpecialRequestDispatcher extends Model implements PluginModelInterface
             $this->attemptCode = null;
         }
 
-        if (!$isSuccess && $this->attemptNumber >= $this->attemptLimit) {
-            $this->createFailedLog(FailedRequestLog::REASON_ATTEMPT);
-            $this->delete();
-            return false;
+        if (!$isSuccess) {
+            if (in_array($this->attemptCode, $this->request->getStopCodes())) {
+                $this->createFailedLog(FailedRequestLog::REASON_STOP_CODE);
+                $this->delete();
+                return false;
+            }
+
+            if ($this->attemptNumber >= $this->attemptLimit) {
+                $this->createFailedLog(FailedRequestLog::REASON_ATTEMPT);
+                $this->delete();
+                return false;
+            }
         }
 
         $this->save();
@@ -135,6 +143,7 @@ class SpecialRequestDispatcher extends Model implements PluginModelInterface
             'body' => $request->getBody(),
             'expireAt' => $request->getExpireAt(),
             'successCode' => $request->getSuccessCode(),
+            'stopCodes' => $request->getStopCodes(),
         ]);
         return $data;
     }
@@ -147,6 +156,7 @@ class SpecialRequestDispatcher extends Model implements PluginModelInterface
             $data['request']['body'],
             $data['request']['expireAt'],
             $data['request']['successCode'],
+            $data['request']['stopCodes'] ?? [],
         );
         $data['request'] = $request;
         return $data;

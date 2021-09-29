@@ -21,13 +21,16 @@ class SpecialRequest
 
     protected int $successCode;
 
-    public function __construct(string $method, string $uri, string $body, ?int $expireAt, int $successCode)
+    protected array $stopCodes = [];
+
+    public function __construct(string $method, string $uri, string $body, ?int $expireAt, int $successCode, array $stopCodes = [])
     {
         $this->method = $method;
         $this->uri = $uri;
         $this->body = $body;
         $this->expireAt = $expireAt;
         $this->successCode = $successCode;
+        $this->stopCodes = $stopCodes;
     }
 
     public function getMethod(): string
@@ -58,9 +61,15 @@ class SpecialRequest
 
         return $this->expireAt < time();
     }
+
     public function getSuccessCode(): int
     {
         return $this->successCode;
+    }
+
+    public function getStopCodes(): array
+    {
+        return $this->stopCodes;
     }
 
 }

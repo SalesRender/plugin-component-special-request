@@ -14,6 +14,7 @@ class FailedRequestLog extends Model
 
     const REASON_EXPIRED = 100;
     const REASON_ATTEMPT = 200;
+    const REASON_STOP_CODE = 300;
 
     protected ?string $companyId;
     protected ?string $pluginId;
