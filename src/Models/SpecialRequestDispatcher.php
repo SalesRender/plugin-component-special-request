@@ -12,11 +12,11 @@ use GuzzleHttp\Exception\BadResponseException;
 use Leadvertex\Plugin\Components\Db\Components\Connector;
 use Leadvertex\Plugin\Components\Db\Helpers\UuidHelper;
 use Leadvertex\Plugin\Components\Db\Model;
-use Leadvertex\Plugin\Components\Db\PluginModelInterface;
+use Leadvertex\Plugin\Components\Db\ModelInterface;
 use Leadvertex\Plugin\Components\Guzzle\Guzzle;
 use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Components\SpecialRequest;
 
-class SpecialRequestDispatcher extends Model implements PluginModelInterface
+class SpecialRequestDispatcher extends Model implements ModelInterface
 {
 
     protected ?string $companyId = null;
