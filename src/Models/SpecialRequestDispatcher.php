@@ -29,6 +29,8 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
 
     protected int $attemptLimit;
 
+    protected int $attemptTimeout;
+
     protected ?int $attemptAt = null;
 
     protected int $attemptNumber = 0;
@@ -37,7 +39,7 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
 
     protected int $httpTimeout;
 
-    public function __construct(SpecialRequest $request, int $attemptLimit = null, int $httpTimeout = 30)
+    public function __construct(SpecialRequest $request, int $attemptLimit = null, int $attemptTimeout = 60, int $httpTimeout = 30)
     {
         $this->id = UuidHelper::getUuid();
         if (Connector::hasReference()) {
@@ -48,7 +50,18 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
         $this->request = $request;
         $limitByExpire = $request->getExpireAt() ? round(($request->getExpireAt() - time()) / 60) : null;
         $this->attemptLimit = $attemptLimit ?? $limitByExpire ?? 24 * 60;
+        $this->attemptTimeout = $attemptTimeout;
         $this->httpTimeout = $httpTimeout;
+    }
+
+    public function getCompanyId(): int
+    {
+        return $this->companyId;
+    }
+
+    public function getPluginId(): int
+    {
+        return $this->pluginId;
     }
 
     /**
@@ -171,6 +184,7 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
             'request' => ['TEXT', 'NOT NULL'],
             'httpTimeout' => ['INT', 'NOT NULL'],
             'attemptLimit' => ['INT'],
+            'attemptTimeout' => ['INT'],
             'attemptAt' => ['INT'],
             'attemptNumber' => ['INT'],
             'attemptCode' => ['INT'],
