@@ -7,30 +7,25 @@
 
 namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Commands;
 
+use Leadvertex\Plugin\Components\Queue\QueueHandleCommand;
 use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestDispatcher;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SpecialRequestDispatcherCommand extends Command
+class SpecialRequestDispatcherCommand extends QueueHandleCommand
 {
 
     public function __construct()
     {
-        parent::__construct("specialRequest:dispatch");
-    }
-
-    protected function configure()
-    {
-        $this
-            ->setDescription('Run special request operation in background')
-            ->addArgument('id', InputArgument::REQUIRED);
+        parent::__construct("specialRequest");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var SpecialRequestDispatcher $request */
         $request = SpecialRequestDispatcher::findById($input->getArgument('id'));
+
         if (is_null($request)) {
             return Command::INVALID;
         }
