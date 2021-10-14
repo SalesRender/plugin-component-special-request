@@ -23,6 +23,7 @@ class SpecialRequestQueueCommand extends QueueCommand
 
     protected function findModels(): array
     {
+        SpecialRequestDispatcher::freeUpMemory();
         return SpecialRequestDispatcher::findByCondition([
             'OR' => [
                 'attemptAt' => null,
