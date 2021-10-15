@@ -9,59 +9,25 @@ namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models;
 
 use Exception;
 use GuzzleHttp\Exception\BadResponseException;
-use Leadvertex\Plugin\Components\Db\Components\Connector;
-use Leadvertex\Plugin\Components\Db\Helpers\UuidHelper;
-use Leadvertex\Plugin\Components\Db\Model;
 use Leadvertex\Plugin\Components\Db\ModelInterface;
 use Leadvertex\Plugin\Components\Guzzle\Guzzle;
+use Leadvertex\Plugin\Components\Queue\Models\Task\Task;
+use Leadvertex\Plugin\Components\Queue\Models\Task\TaskAttempt;
 use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Components\SpecialRequest;
 
-class SpecialRequestDispatcher extends Model implements ModelInterface
+class SpecialRequestTask extends Task implements ModelInterface
 {
 
-    protected ?string $companyId = null;
-
-    protected ?string $pluginId = null;
-
-    protected int $createdAt;
-
     protected SpecialRequest $request;
-
-    protected int $attemptLimit;
-
-    protected int $attemptTimeout;
-
-    protected ?int $attemptAt = null;
-
-    protected int $attemptNumber = 0;
-
-    protected ?int $attemptCode = null;
 
     protected int $httpTimeout;
 
     public function __construct(SpecialRequest $request, int $attemptLimit = null, int $attemptTimeout = 60, int $httpTimeout = 30)
     {
-        $this->id = UuidHelper::getUuid();
-        if (Connector::hasReference()) {
-            $this->companyId = Connector::getReference()->getCompanyId();
-            $this->pluginId = Connector::getReference()->getId();
-        }
-        $this->createdAt = time();
-        $this->request = $request;
         $limitByExpire = $request->getExpireAt() ? round(($request->getExpireAt() - time()) / 60) : null;
-        $this->attemptLimit = $attemptLimit ?? $limitByExpire ?? 24 * 60;
-        $this->attemptTimeout = $attemptTimeout;
+        parent::__construct(new TaskAttempt($attemptLimit ?? $limitByExpire ?? 24 * 60, $attemptTimeout));
+        $this->request = $request;
         $this->httpTimeout = $httpTimeout;
-    }
-
-    public function getCompanyId(): int
-    {
-        return $this->companyId;
-    }
-
-    public function getPluginId(): int
-    {
-        return $this->pluginId;
     }
 
     /**
@@ -81,8 +47,6 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
         }
 
         try {
-            $this->attemptAt = time();
-            $this->attemptNumber++;
             $response = Guzzle::getInstance()->request(
                 $this->request->getMethod(),
                 $this->request->getUri(),
@@ -91,34 +55,34 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
                         'request' => $this->request->getBody(),
                         '__dispatcher' => [
                             'createdAt' => $this->createdAt,
-                            'attemptNumber' => $this->attemptNumber,
-                            'attemptLimit' => $this->attemptLimit,
+                            'attemptNumber' => $this->attempt->getNumber(),
+                            'attemptLimit' => $this->attempt->getLimit(),
                         ]
                     ],
                     'timeout' => $this->httpTimeout,
                 ]
             );
-            $this->attemptCode = $response->getStatusCode();
+            $this->attempt->attempt($response->getStatusCode());
             if ($isSuccess = $response->getStatusCode() === $this->request->getSuccessCode()) {
                 $this->delete();
                 return true;
             }
         } catch (BadResponseException $exception) {
             $isSuccess = false;
-            $this->attemptCode = $exception->getResponse()->getStatusCode();
+            $this->attempt->attempt($exception->getResponse()->getStatusCode());
         } catch (Exception $exception) {
             $isSuccess = false;
-            $this->attemptCode = null;
+            $this->attempt->attempt('');
         }
 
         if (!$isSuccess) {
-            if (in_array($this->attemptCode, $this->request->getStopCodes())) {
+            if (in_array($this->attempt->getLog(), $this->request->getStopCodes())) {
                 $this->createFailedLog(FailedRequestLog::REASON_STOP_CODE);
                 $this->delete();
                 return false;
             }
 
-            if ($this->attemptNumber >= $this->attemptLimit) {
+            if ($this->attempt->isSpent()) {
                 $this->createFailedLog(FailedRequestLog::REASON_ATTEMPT);
                 $this->delete();
                 return false;
@@ -138,9 +102,9 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
             $this->request->getMethod(),
             $this->request->getUri(),
             $this->request->getBody(),
-            $this->attemptAt,
-            $this->attemptNumber,
-            $this->attemptCode,
+            $this->attempt->getLastTime(),
+            $this->attempt->getNumber(),
+            $this->attempt->getLog(),
             $reason,
         );
         $log->save();
@@ -148,6 +112,7 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
 
     protected static function beforeWrite(array $data): array
     {
+        $data = parent::beforeWrite($data);
         /** @var SpecialRequest $request */
         $request = $data['request'];
         $data['request'] = json_encode([
@@ -163,6 +128,7 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
 
     protected static function afterRead(array $data): array
     {
+        $data = parent::afterRead($data);
         $request = new SpecialRequest(
             $data['request']['method'],
             $data['request']['uri'],
@@ -177,17 +143,9 @@ class SpecialRequestDispatcher extends Model implements ModelInterface
 
     public static function schema(): array
     {
-        return [
-            'companyId' => ['VARCHAR(255)'],
-            'pluginId' => ['VARCHAR(255)'],
-            'createdAt' => ['INT', 'NOT NULL'],
+        return array_merge(parent::schema(), [
             'request' => ['TEXT', 'NOT NULL'],
             'httpTimeout' => ['INT', 'NOT NULL'],
-            'attemptLimit' => ['INT'],
-            'attemptTimeout' => ['INT'],
-            'attemptAt' => ['INT'],
-            'attemptNumber' => ['INT'],
-            'attemptCode' => ['INT'],
-        ];
+        ]);
     }
 }

@@ -21,6 +21,6 @@
     "symfony/console": "^5.3",
     "leadvertex/plugin-component-db": "^0.3.8",
     "leadvertex/plugin-component-guzzle": "^0.3.1",
-    "leadvertex/plugin-component-queue": "^0.1.0"
+    "leadvertex/plugin-component-queue": "^0.2.0"
   }
 }

@@ -7,8 +7,8 @@
 
 namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Commands;
 
-use Leadvertex\Plugin\Components\Queue\QueueHandleCommand;
-use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestDispatcher;
+use Leadvertex\Plugin\Components\Queue\Commands\QueueHandleCommand;
+use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestTask;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,8 +23,8 @@ class SpecialRequestHandleCommand extends QueueHandleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var SpecialRequestDispatcher $request */
-        $request = SpecialRequestDispatcher::findById($input->getArgument('id'));
+        /** @var SpecialRequestTask $request */
+        $request = SpecialRequestTask::findById($input->getArgument('id'));
 
         if (is_null($request)) {
             return Command::INVALID;

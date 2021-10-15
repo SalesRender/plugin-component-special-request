@@ -8,8 +8,8 @@
 namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Commands;
 
 use Leadvertex\Plugin\Components\Db\ModelInterface;
-use Leadvertex\Plugin\Components\Queue\QueueCommand;
-use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestDispatcher;
+use Leadvertex\Plugin\Components\Queue\Commands\QueueCommand;
+use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestTask;
 use Medoo\Medoo;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,8 +23,8 @@ class SpecialRequestQueueCommand extends QueueCommand
 
     protected function findModels(): array
     {
-        SpecialRequestDispatcher::freeUpMemory();
-        return SpecialRequestDispatcher::findByCondition([
+        SpecialRequestTask::freeUpMemory();
+        return SpecialRequestTask::findByCondition([
             'OR' => [
                 'attemptAt' => null,
                 'attemptAt[<=]' => Medoo::raw('(:time - <attemptTimeout>)', [':time' => time()]),
@@ -36,7 +36,7 @@ class SpecialRequestQueueCommand extends QueueCommand
     }
 
     /**
-     * @param SpecialRequestDispatcher|ModelInterface $model
+     * @param SpecialRequestTask|ModelInterface $model
      * @param OutputInterface $output
      */
     protected function startedLog(ModelInterface $model, OutputInterface $output): void
