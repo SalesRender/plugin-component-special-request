@@ -93,6 +93,16 @@ class SpecialRequestTask extends Task implements ModelInterface
         return $isSuccess;
     }
 
+    public function save(): void
+    {
+        $isNew = $this->isNewModel();
+        parent::save();
+
+        if ($isNew && $_ENV['LV_PLUGIN_DEBUG']) {
+            $this->send();
+        }
+    }
+
     protected function createFailedLog(int $reason): void
     {
         $log = new FailedRequestLog(
