@@ -17,6 +17,7 @@ class FailedRequestLog extends Model
     const REASON_STOP_CODE = 300;
 
     protected ?string $companyId;
+    protected ?string $pluginAlias;
     protected ?string $pluginId;
     protected int $createdAt;
     protected string $method;
@@ -29,6 +30,7 @@ class FailedRequestLog extends Model
 
     public function __construct(
         string $companyId,
+        string $pluginAlias,
         string $pluginId,
         int $createdAt,
         string $method,
@@ -41,6 +43,7 @@ class FailedRequestLog extends Model
     )
     {
         $this->companyId = $companyId;
+        $this->pluginAlias = $pluginAlias;
         $this->pluginId = $pluginId;
         $this->createdAt = $createdAt;
         $this->method = $method;
@@ -56,6 +59,7 @@ class FailedRequestLog extends Model
     {
         return [
             'companyId' => ['VARCHAR(255)'],
+            'pluginAlias' => ['VARCHAR(255)'],
             'pluginId' => ['VARCHAR(255)'],
             'createdAt' => ['INT', 'NOT NULL'],
             'method' => ['VARCHAR(10)', 'NOT NULL'],

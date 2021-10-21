@@ -53,10 +53,13 @@ class SpecialRequestTask extends Task implements ModelInterface
                 [
                     'json' => [
                         'request' => $this->request->getBody(),
-                        '__dispatcher' => [
+                        '__task' => [
                             'createdAt' => $this->createdAt,
-                            'attemptNumber' => $this->attempt->getNumber(),
-                            'attemptLimit' => $this->attempt->getLimit(),
+                            'attempt' => [
+                                'number' => $this->attempt->getNumber(),
+                                'limit' => $this->attempt->getLimit(),
+                                'interval' => $this->attempt->getInterval(),
+                            ],
                         ]
                     ],
                     'timeout' => $this->httpTimeout,
@@ -107,6 +110,7 @@ class SpecialRequestTask extends Task implements ModelInterface
     {
         $log = new FailedRequestLog(
             $this->companyId,
+            $this->pluginAlias,
             $this->pluginId,
             $this->createdAt,
             $this->request->getMethod(),
