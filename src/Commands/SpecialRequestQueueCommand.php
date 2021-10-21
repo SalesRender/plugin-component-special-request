@@ -43,7 +43,7 @@ class SpecialRequestQueueCommand extends QueueCommand
     {
         $verb = $model->getRequest()->getMethod();
         $uri = $model->getRequest()->getUri();
-        $output->writeln("<info>[STARTED]</info>Request '{$model->getId()}' {$verb} {$uri}");
+        $output->writeln("<info>[STARTED]</info> Request '{$model->getId()}' {$verb} {$uri}");
     }
 
 }
