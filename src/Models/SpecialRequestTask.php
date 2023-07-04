@@ -80,7 +80,7 @@ class SpecialRequestTask extends Task implements ModelInterface
     public static function schema(): array
     {
         return array_merge(parent::schema(), [
-            'request' => ['TEXT', 'NOT NULL'],
+            'request' => ['MEDIUMTEXT', 'NOT NULL'],
             'httpTimeout' => ['INT', 'NOT NULL'],
         ]);
     }
