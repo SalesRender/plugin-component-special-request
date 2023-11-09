@@ -5,11 +5,11 @@
  * @author Timur Kasumov (XAKEPEHOK)
  */
 
-namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Commands;
+namespace SalesRender\Plugin\Components\SpecialRequestDispatcher\Commands;
 
-use Leadvertex\Plugin\Components\Db\ModelInterface;
-use Leadvertex\Plugin\Components\Queue\Commands\QueueCommand;
-use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestTask;
+use SalesRender\Plugin\Components\Db\ModelInterface;
+use SalesRender\Plugin\Components\Queue\Commands\QueueCommand;
+use SalesRender\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestTask;
 use Medoo\Medoo;
 use Symfony\Component\Console\Output\OutputInterface;
 

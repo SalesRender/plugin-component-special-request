@@ -1,26 +1,26 @@
 {
-  "name": "leadvertex/plugin-component-request-dispatcher",
-  "description": "LeadVertex plugin special request dispatcher component",
+  "name": "salesrender/plugin-component-request-dispatcher",
+  "description": "SalesRender plugin special request dispatcher component",
   "type": "library",
   "minimum-stability": "stable",
   "license": "proprietary",
   "authors": [
     {
       "name": "Timur Kasumov aka XAKEPEHOK",
-      "email": "support@leadvertex.com"
+      "email": "support@salesrender.com"
     }
   ],
   "autoload": {
     "psr-4": {
-      "Leadvertex\\Plugin\\Components\\SpecialRequestDispatcher\\": "src/"
+      "SalesRender\\Plugin\\Components\\SpecialRequestDispatcher\\": "src/"
     }
   },
   "require": {
     "php": ">=7.4.0",
     "ext-json": "*",
     "symfony/console": "^5.3",
-    "leadvertex/plugin-component-db": "^0.3.8",
-    "leadvertex/plugin-component-guzzle": "^0.3.1",
-    "leadvertex/plugin-component-queue": "^0.3.0"
+    "salesrender/plugin-component-db": "^0.3.8",
+    "salesrender/plugin-component-guzzle": "^0.3.1",
+    "salesrender/plugin-component-queue": "^0.3.0"
   }
 }

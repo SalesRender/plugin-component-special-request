@@ -5,7 +5,7 @@
  * @author Timur Kasumov (XAKEPEHOK)
  */
 
-namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Components;
+namespace SalesRender\Plugin\Components\SpecialRequestDispatcher\Components;
 
 
 class SpecialRequest

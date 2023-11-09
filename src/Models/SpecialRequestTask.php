@@ -5,12 +5,12 @@
  * @author Timur Kasumov (XAKEPEHOK)
  */
 
-namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models;
+namespace SalesRender\Plugin\Components\SpecialRequestDispatcher\Models;
 
-use Leadvertex\Plugin\Components\Db\ModelInterface;
-use Leadvertex\Plugin\Components\Queue\Models\Task\Task;
-use Leadvertex\Plugin\Components\Queue\Models\Task\TaskAttempt;
-use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Components\SpecialRequest;
+use SalesRender\Plugin\Components\Db\ModelInterface;
+use SalesRender\Plugin\Components\Queue\Models\Task\Task;
+use SalesRender\Plugin\Components\Queue\Models\Task\TaskAttempt;
+use SalesRender\Plugin\Components\SpecialRequestDispatcher\Components\SpecialRequest;
 
 class SpecialRequestTask extends Task implements ModelInterface
 {

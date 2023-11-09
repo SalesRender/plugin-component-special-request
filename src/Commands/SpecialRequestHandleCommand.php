@@ -5,12 +5,12 @@
  * @author Timur Kasumov (XAKEPEHOK)
  */
 
-namespace Leadvertex\Plugin\Components\SpecialRequestDispatcher\Commands;
+namespace SalesRender\Plugin\Components\SpecialRequestDispatcher\Commands;
 
 use GuzzleHttp\Exception\BadResponseException;
-use Leadvertex\Plugin\Components\Guzzle\Guzzle;
-use Leadvertex\Plugin\Components\Queue\Commands\QueueHandleCommand;
-use Leadvertex\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestTask;
+use SalesRender\Plugin\Components\Guzzle\Guzzle;
+use SalesRender\Plugin\Components\Queue\Commands\QueueHandleCommand;
+use SalesRender\Plugin\Components\SpecialRequestDispatcher\Models\SpecialRequestTask;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
