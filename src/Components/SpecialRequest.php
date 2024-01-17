@@ -30,7 +30,9 @@ class SpecialRequest
         $this->body = $body;
         $this->expireAt = $expireAt;
         $this->successCode = $successCode;
-        $this->stopCodes = $stopCodes;
+
+        //418 - archived plugin
+        $this->stopCodes = [418, ...$stopCodes];
     }
 
     public function getMethod(): string
