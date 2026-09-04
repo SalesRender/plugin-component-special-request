@@ -19,7 +19,7 @@ class SpecialRequestTask extends Task implements ModelInterface
 
     protected int $httpTimeout;
 
-    public function __construct(SpecialRequest $request, int $attemptLimit = null, int $attemptTimeout = 60, int $httpTimeout = 30)
+    public function __construct(SpecialRequest $request, ?int $attemptLimit = null, int $attemptTimeout = 60, int $httpTimeout = 30)
     {
         $limitByExpire = $request->getExpireAt() ? round(($request->getExpireAt() - time()) / 60) : null;
         parent::__construct(new TaskAttempt($attemptLimit ?? $limitByExpire ?? 24 * 60, $attemptTimeout));

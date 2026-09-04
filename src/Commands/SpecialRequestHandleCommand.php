@@ -24,7 +24,7 @@ class SpecialRequestHandleCommand extends QueueHandleCommand
         parent::__construct("specialRequest");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var SpecialRequestTask $task */
         $task = SpecialRequestTask::findById($input->getArgument('id'));
